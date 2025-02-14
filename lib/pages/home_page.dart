@@ -1,30 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_ui_5/data/places.dart';
+import 'package:responsive_ui_5/model/place.dart';
+import 'package:responsive_ui_5/widgets/drawer_widget.dart';
+import 'package:responsive_ui_5/widgets/place_details_widget.dart';
+import 'package:responsive_ui_5/widgets/place_gallery_widget.dart';
 import '../widgets/responsive_widget.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: ResponsiveWidget(
-          mobile: buildMobile(),
-          tablet: buildTablet(),
-          desktop: buildDesktop(),
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  Place selectedPlace = allPlaces[0];
+  void changePlace(Place place) => setState(() => selectedPlace = place);
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = ResponsiveWidget.isMobile(context);
+    return Scaffold(
+      appBar: AppBar(title: const Text('Tour App - Responsive')),
+      drawer: isMobile ? const Drawer(child: DrawerWidget()) : null,
+      body: ResponsiveWidget(
+        mobile: buildMobile(),
+        tablet: buildTablet(),
+        desktop: buildDesktop(),
+      ),
+    );
+  }
+
+  Widget buildMobile() => PlaceGalleryWidget(onPlaceChanged: changePlace);
+
+  Widget buildTablet() => Row(
+        children: [
+          const Expanded(flex: 2, child: DrawerWidget()),
+          Expanded(
+            flex: 5,
+            child: PlaceGalleryWidget(onPlaceChanged: changePlace),
+          ),
+        ],
+      );
+
+  Widget buildDesktop() => Row(
+        children: [
+          const Expanded(child: DrawerWidget()),
+          Expanded(flex: 3, child: buildBody()),
+        ],
+      );
+
+  Widget buildBody() => Container(
+        color: Colors.grey[200],
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: PlaceGalleryWidget(
+                onPlaceChanged: changePlace,
+                isHorizontal: true,
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: PlaceDetailsWidget(place: selectedPlace),
+            )
+          ],
         ),
-      );
-
-  Widget buildMobile() => Container(
-        color: Colors.red,
-        child: const Center(child: Text('Mobile Screen')),
-      );
-
-  Widget buildTablet() => Container(
-        color: Colors.blue,
-        child: const Center(child: Text('Tablet Screen')),
-      );
-
-  Widget buildDesktop() => Container(
-        color: Colors.orange,
-        child: const Center(child: Text('Desktop Screen')),
       );
 }

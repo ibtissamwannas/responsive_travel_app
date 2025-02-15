@@ -1,4 +1,4 @@
-# 🌍 Travel App UI - Flutter
+# 🌍 Tour App UI - Flutter
 
 A **responsive** and **minimalist** travel app UI built with Flutter. The app features a **drawer menu**, a **list of places**, and a **detailed view when clicking on a place**.
 
